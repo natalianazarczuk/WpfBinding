@@ -1,0 +1,105 @@
+﻿<Window x:Class="WpfBinding.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfBinding"
+        mc:Ignorable="d"
+        Title="Planes" Height="350" Width="600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style x:Key="styleBlockText" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="styleBlockText2" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="styleListView" TargetType="{x:Type ListView}">
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <local:GetFlightsList x:Key="getFlightsList"/>
+        <local:GetWeight x:Key="getWeight"/>
+        <local:GetArrival x:Key="getArrival"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="140"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Column="0" Header="Planes List">
+            <ListView Style="{StaticResource styleListView}" Name="Planes" ItemsSource="{Binding}" DisplayMemberPath="Brand"/>
+        </GroupBox>
+
+        <StackPanel Grid.Column="1" VerticalAlignment="Top">
+            <GroupBox Header="Model Name" Height="40">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="ModelName" Text="{Binding ElementName=Planes, Path=SelectedItem.Brand, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+            <GroupBox Header="Capacity [PPL]" Height="40">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Capacity" Text="{Binding ElementName=Planes, Path=SelectedItem.Capacity, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" VerticalAlignment="Top">
+            <GroupBox Header="Registration Name" Height="40">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Registration" Text="{Binding ElementName=Planes, Path=SelectedItem.Registration, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+            <GroupBox Header="Weight [KGs]" Height="40">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Weight" Text="{Binding ElementName=Planes, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource getWeight}}"/>
+            </GroupBox>
+        </StackPanel>
+
+        <GroupBox Grid.Column="1" Grid.ColumnSpan="2" Header="Flights List" Margin="0,87,-0.333,148" >
+            <ListView Style="{StaticResource styleListView}" Name="Flights" DisplayMemberPath="Number" ItemsSource="{Binding 
+                ElementName=Planes,
+                Path=SelectedItem,
+                UpdateSourceTrigger=PropertyChanged,
+                Converter={StaticResource getFlightsList}}" HorizontalAlignment="Left" Width="431" Height="52" VerticalAlignment="Top">
+
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Center" VerticalAlignment="Center" ItemHeight="{Binding ElementName=Flights, Path=ActualHeight}"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+
+        </GroupBox>
+
+        <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
+            <GroupBox Header="Origin Airport" Height="77" Margin="0,0,0.333,0">
+                <TextBlock Style="{StaticResource styleBlockText2}" Name="Origin" Text="{Binding ElementName=Flights, Path=SelectedItem.Origin, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+            <GroupBox Header="Destination Airport" Height="65">
+                <TextBlock Style="{StaticResource styleBlockText2}" Name="Destination" Text="{Binding ElementName=Flights, Path=SelectedItem.Destination, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" VerticalAlignment="Bottom">
+            <GroupBox Header="Departure Time" Height="50" Margin="0,0,0.333,0">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Departure" Text="{Binding ElementName=Flights, Path=SelectedItem.DepartureTime, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+            <GroupBox Header="Duration" Height="45">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Duration" Text="{Binding ElementName=Flights, Path=SelectedItem.Duration, UpdateSourceTrigger=PropertyChanged}"/>
+            </GroupBox>
+            <GroupBox Header="Arrival Time" Height="45">
+                <TextBlock Style="{StaticResource styleBlockText}" Name="Arrival" Text="{Binding ElementName=Flights, Path=SelectedItem, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource getArrival}}"/>
+            </GroupBox>
+        </StackPanel>
+
+    </Grid>
+
+</Window>
